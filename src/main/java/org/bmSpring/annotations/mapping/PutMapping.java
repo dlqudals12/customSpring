@@ -1,5 +1,6 @@
-package org.bmSpring.annotations;
+package org.bmSpring.annotations.mapping;
 
+import org.bmSpring.annotations.AliasFor;
 import org.bmSpring.servlet.MediaType;
 import org.bmSpring.servlet.enums.HttpType;
 

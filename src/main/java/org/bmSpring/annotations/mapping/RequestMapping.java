@@ -1,20 +1,17 @@
-package org.bmSpring.annotations;
+package org.bmSpring.annotations.mapping;
 
 import org.bmSpring.servlet.MediaType;
 import org.bmSpring.servlet.enums.HttpType;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@RequestMapping(type = HttpType.DELETE)
-public @interface DeleteMapping {
+public @interface RequestMapping {
+    HttpType type() default HttpType.CLASS;
 
-    @AliasFor(annotation = RequestMapping.class)
     String value() default "";
 
-    @AliasFor(annotation = RequestMapping.class)
     String contentType() default MediaType.APPLICATION_JSON_VALUE;
-
 }

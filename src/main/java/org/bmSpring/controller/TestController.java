@@ -1,8 +1,12 @@
 package org.bmSpring.controller;
 
-import org.bmSpring.annotations.*;
+import org.bmSpring.annotations.component.Controller;
+import org.bmSpring.annotations.mapping.DeleteMapping;
+import org.bmSpring.annotations.mapping.GetMapping;
+import org.bmSpring.annotations.mapping.PatchMapping;
+import org.bmSpring.annotations.mapping.RequestMapping;
 
-@Bean
+@Controller
 @RequestMapping("/maps")
 public class TestController {
 

@@ -3,10 +3,11 @@ package org.bmSpring.bean;
 import org.bmSpring.annotations.Bean;
 import org.bmSpring.scan.ResourceLoader;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.Map;
 
 
 public class BeanCreate {
@@ -14,17 +15,16 @@ public class BeanCreate {
     private final HashMap<String, Object> beans = new HashMap<>();
 
     public BeanCreate() {
-        Set<Class<?>> beanClasses = ResourceLoader.classesByAnnotation(Bean.class);
+        HashMap<Class<?>, Class<? extends Annotation>> beanClasses = ResourceLoader.classesContainsAnnotation(Bean.class);
 
-        for (Class<?> beanClass : beanClasses) {
-            if (beans.containsKey(beanClass.getName()) || beanClass.getAnnotation(Bean.class) == null) continue;
-
-            putBeans(beanClass);
+        for (Map.Entry<Class<?>, Class<? extends Annotation>> beanClass : beanClasses.entrySet()) {
+            putBeans(beanClass.getKey(), beanClass.getValue());
         }
+
     }
 
-    public void putBeans(Class<?> beanClass) {
-        Bean annotation = beanClass.getAnnotation(Bean.class);
+    public void putBeans(Class<?> beanClass, Class<? extends Annotation> ano) {
+        Bean annotation = (Bean) beanClass.getAnnotation(ano);
 
         String name = annotation.name();
 
@@ -35,7 +35,7 @@ public class BeanCreate {
             Class<?>[] parameterTypes = constructor.getParameterTypes();
 
             for (Class<?> parameterType : parameterTypes) {
-                if (!beans.containsKey(parameterType.getSimpleName())) putBeans(parameterType);
+                if (!beans.containsKey(parameterType.getSimpleName())) putBeans(parameterType, ano);
             }
             Object bean = constructor.newInstance(Arrays.stream(parameterTypes).map(pa -> beans.get(pa.getSimpleName())).toArray());
 
