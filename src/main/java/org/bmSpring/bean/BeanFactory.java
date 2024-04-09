@@ -11,15 +11,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
-public class BeanCreate {
+public class BeanFactory {
 
     private final HashMap<String, Object> beans = new HashMap<>();
 
-    public BeanCreate() {
-        Set<Class<?>> componentClasses = ResourceLoader.classesContainsAnnotation(Component.class).stream().filter(c -> !c.isAnnotation()).collect(Collectors.toSet());
+    public BeanFactory() {
+        Set<Class<?>> componentClasses = ResourceLoader.classesContainsAnnotation(Component.class);
 
         List<BeanMethod> beanMethods = new ArrayList<>();
 

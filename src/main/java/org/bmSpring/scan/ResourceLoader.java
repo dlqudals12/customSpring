@@ -21,18 +21,13 @@ public class ResourceLoader {
         allClasses = reflections.getSubTypesOf(Object.class);
     }
 
-    public static Set<Class<?>> classesByAnnotation(Class<? extends Annotation> annotation) {
-        if (allClasses.isEmpty()) throw new RuntimeException();
-
-        return allClasses.stream().filter(c -> c.isAnnotationPresent(annotation) && !c.isAnnotation()).collect(Collectors.toSet());
-    }
 
     public static Set<Class<?>> classesContainsAnnotation(Class<? extends Annotation> annotation) {
         if (allClasses.isEmpty()) throw new NullPointerException();
 
         Reflections reflections = new Reflections(allClasses);
 
-        return reflections.getTypesAnnotatedWith(annotation);
+        return reflections.getTypesAnnotatedWith(annotation).stream().filter(c -> !c.isAnnotation()).collect(Collectors.toSet());
     }
 
 

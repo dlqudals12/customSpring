@@ -1,24 +1,28 @@
 package org.bmSpring.servlet;
 
-import org.bmSpring.bean.BeanCreate;
+import org.bmSpring.bean.BeanFactory;
+import org.bmSpring.servlet.enums.HttpType;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Set;
 
 public class HttpServletContext {
 
-    private final BeanCreate beanCreate;
+    private final BeanFactory beanFactory;
     private final HttpServletFactory httpServletFactory;
 
-    public HttpServletContext(BeanCreate beanCreate) {
-        this.beanCreate = beanCreate;
+    public HttpServletContext(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
         this.httpServletFactory = new HttpServletFactory();
 
-        for (Map.Entry<String, String> mapping : httpServletFactory.getMappings().entrySet()) {
-            System.out.println("KEY: " + mapping.getKey() + " VALUE: " + mapping.getValue());
+        for (Map.Entry<HttpType, Set<String>> mapping : httpServletFactory.getMappings().entrySet()) {
+            for (String path : mapping.getValue()) {
+                System.out.printf("HTTP Type: %s >> HTTP Path: %s", mapping.getKey(), path);
+            }
         }
     }
 
