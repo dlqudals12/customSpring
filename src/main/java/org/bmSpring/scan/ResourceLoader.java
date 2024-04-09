@@ -4,8 +4,6 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
@@ -29,43 +27,12 @@ public class ResourceLoader {
         return allClasses.stream().filter(c -> c.isAnnotationPresent(annotation) && !c.isAnnotation()).collect(Collectors.toSet());
     }
 
-    public static HashMap<Class<?>, Class<? extends Annotation>> classesContainsAnnotation(Class<? extends Annotation> annotation) {
+    public static Set<Class<?>> classesContainsAnnotation(Class<? extends Annotation> annotation) {
         if (allClasses.isEmpty()) throw new NullPointerException();
 
-        Set<Class<? extends Annotation>> annotations = new HashSet<>();
+        Reflections reflections = new Reflections(allClasses);
 
-        annotations.add(annotation);
-
-        absClassesContainsAnnotation(annotation, annotations);
-
-        HashMap<Class<?>, Class<? extends Annotation>> result = new HashMap<>();
-
-        for (Class<?> allClass : allClasses) {
-
-            if (!allClass.isAnnotation()) {
-                for (Class<? extends Annotation> ano : annotations) {
-                    if (allClass.isAnnotationPresent(ano)) {
-                        result.put(allClass, ano);
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    @SuppressWarnings(value = "unchecked")
-    private static void absClassesContainsAnnotation(Class<? extends Annotation> annotation, Set<Class<? extends Annotation>> annotations) {
-
-        Set<Class<? extends Annotation>> ano = allClasses.stream().filter(c -> c.isAnnotationPresent(annotation) && c.isAnnotation()).map(c -> (Class<? extends Annotation>) c).collect(Collectors.toSet());
-
-        if (!ano.isEmpty()) {
-            annotations.addAll(ano);
-
-            for (Class<? extends Annotation> aClass : ano) {
-                absClassesContainsAnnotation(aClass, annotations);
-            }
-        }
+        return reflections.getTypesAnnotatedWith(annotation);
     }
 
 

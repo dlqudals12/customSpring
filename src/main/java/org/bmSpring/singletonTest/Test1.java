@@ -1,8 +1,8 @@
 package org.bmSpring.singletonTest;
 
-import org.bmSpring.annotations.Bean;
+import org.bmSpring.annotations.component.Component;
 
-@Bean
+@Component
 public class Test1 {
 
     private final Test2 test2;

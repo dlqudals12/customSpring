@@ -11,18 +11,18 @@ import java.util.Map;
 public class HttpServletContext {
 
     private final BeanCreate beanCreate;
+    private final HttpServletFactory httpServletFactory;
 
     public HttpServletContext(BeanCreate beanCreate) {
         this.beanCreate = beanCreate;
-    }
-
-    public void waitServer() {
-        HttpServletFactory httpServletFactory = new HttpServletFactory();
+        this.httpServletFactory = new HttpServletFactory();
 
         for (Map.Entry<String, String> mapping : httpServletFactory.getMappings().entrySet()) {
             System.out.println("KEY: " + mapping.getKey() + " VALUE: " + mapping.getValue());
         }
+    }
 
+    public void waitServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(19050);
 
@@ -61,7 +61,7 @@ public class HttpServletContext {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
