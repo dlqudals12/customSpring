@@ -56,7 +56,7 @@ public class HttpServletFactory {
 
                     if (httpType != null && content != null && !path.isEmpty()) {
                         if (!path.toString().startsWith("/")) path.insert(0, "/");
-                        HttpMethod httpMethod = new HttpMethod(content, httpType, beanName, method.getName(), path.toString(), method.getReturnType());
+                        HttpMethod httpMethod = new HttpMethod(content, httpType, beanName, method, path.toString(), method.getReturnType());
 
                         String key = httpType.getValue() + path;
 

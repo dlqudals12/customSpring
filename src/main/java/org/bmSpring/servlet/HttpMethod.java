@@ -3,20 +3,22 @@ package org.bmSpring.servlet;
 import org.bmSpring.servlet.enums.HttpType;
 import org.bmSpring.servlet.enums.MediaType;
 
+import java.lang.reflect.Method;
+
 public class HttpMethod {
 
     private MediaType mediaType;
     private HttpType httpType;
     private String controllerName;
-    private String methodName;
+    private Method method;
     private String path;
     private Class<?> returnType;
 
-    public HttpMethod(MediaType mediaType, HttpType httpType, String controllerName, String methodName, String path, Class<?> returnType) {
+    public HttpMethod(MediaType mediaType, HttpType httpType, String controllerName, Method method, String path, Class<?> returnType) {
         this.mediaType = mediaType;
         this.httpType = httpType;
         this.controllerName = controllerName;
-        this.methodName = methodName;
+        this.method = method;
         this.path = path;
         this.returnType = returnType;
     }
@@ -33,8 +35,8 @@ public class HttpMethod {
         return controllerName;
     }
 
-    public String getMethodName() {
-        return methodName;
+    public Method getMethod() {
+        return method;
     }
 
     public String getPath() {
