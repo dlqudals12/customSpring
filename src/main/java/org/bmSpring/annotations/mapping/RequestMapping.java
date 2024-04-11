@@ -1,7 +1,7 @@
 package org.bmSpring.annotations.mapping;
 
-import org.bmSpring.servlet.MediaType;
 import org.bmSpring.servlet.enums.HttpType;
+import org.bmSpring.servlet.enums.MediaType;
 
 import java.lang.annotation.*;
 
@@ -13,5 +13,5 @@ public @interface RequestMapping {
 
     String value() default "";
 
-    String contentType() default MediaType.APPLICATION_JSON_VALUE;
+    MediaType contentType() default MediaType.APPLICATION_JSON_VALUE;
 }

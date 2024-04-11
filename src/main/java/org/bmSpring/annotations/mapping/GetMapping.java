@@ -1,8 +1,8 @@
 package org.bmSpring.annotations.mapping;
 
 import org.bmSpring.annotations.AliasFor;
-import org.bmSpring.servlet.MediaType;
 import org.bmSpring.servlet.enums.HttpType;
+import org.bmSpring.servlet.enums.MediaType;
 
 import java.lang.annotation.*;
 
@@ -12,10 +12,11 @@ import java.lang.annotation.*;
 @RequestMapping(type = HttpType.GET)
 public @interface GetMapping {
 
+
     @AliasFor(annotation = RequestMapping.class)
     String value() default "";
 
     @AliasFor(annotation = RequestMapping.class)
-    String contentType() default MediaType.APPLICATION_JSON_VALUE;
+    MediaType contentType() default MediaType.APPLICATION_JSON_VALUE;
 
 }

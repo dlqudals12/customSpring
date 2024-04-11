@@ -1,10 +1,8 @@
 package org.bmSpring.controller;
 
 import org.bmSpring.annotations.component.Controller;
-import org.bmSpring.annotations.mapping.DeleteMapping;
-import org.bmSpring.annotations.mapping.GetMapping;
-import org.bmSpring.annotations.mapping.PatchMapping;
-import org.bmSpring.annotations.mapping.RequestMapping;
+import org.bmSpring.annotations.mapping.*;
+import org.bmSpring.servlet.enums.HttpType;
 
 @Controller
 @RequestMapping("/maps")
@@ -15,7 +13,7 @@ public class TestController {
 
     }
 
-    @GetMapping("/1")
+    @PostMapping("/1")
     public void test2() {
 
     }
@@ -27,6 +25,11 @@ public class TestController {
 
     @DeleteMapping("/")
     public void test4() {
+
+    }
+
+    @RequestMapping(value = "/requet", type = HttpType.PATCH)
+    public void test43() {
 
     }
 }
