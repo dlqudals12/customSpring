@@ -118,4 +118,8 @@ public class BeanFactory {
     public HashMap<String, Object> getBeans() {
         return beans;
     }
+
+    public Object getBean(String controllerName) {
+        return beans.get(controllerName);
+    }
 }

@@ -1,23 +1,29 @@
-package org.bmSpring.servlet;
+package org.bmSpring.servlet.factory;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import org.bmSpring.annotations.component.Controller;
 import org.bmSpring.annotations.mapping.RequestMapping;
+import org.bmSpring.annotations.parameter.RequestParam;
+import org.bmSpring.annotations.parameter.ResponseBody;
 import org.bmSpring.scan.ResourceLoader;
 import org.bmSpring.servlet.enums.HttpType;
 import org.bmSpring.servlet.enums.MediaType;
+import org.bmSpring.servlet.model.HttpMethod;
+import org.bmSpring.servlet.model.HttpServletRequest;
+import org.bmSpring.servlet.model.HttpServletResponse;
 import org.bmSpring.util.AnnotationUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Set;
 
-public class HttpServletFactory {
+public class HttpServletFactoryImpl implements HttpServletFactory {
 
     private final HashMap<String, HttpMethod> mappings = new HashMap<>();
 
-    public HttpServletFactory() {
+    public HttpServletFactoryImpl() {
         Set<Class<?>> classes = ResourceLoader.classesContainsAnnotation(Controller.class);
 
         for (Class<?> aClass : classes) {
@@ -36,6 +42,7 @@ public class HttpServletFactory {
                 }
 
                 Annotation[] annotations = method.getAnnotations();
+                Parameter[] parameters = method.getParameters();
 
                 HttpType httpType = null;
                 MediaType content = null;
@@ -54,9 +61,39 @@ public class HttpServletFactory {
                         }
                     }
 
+                    HashMap<String, Class<?>> requestType = new HashMap<>();
+                    Class<?> bodyType = null;
+                    boolean isRequest = false;
+                    boolean isResponse = false;
+
+                    for (Parameter parameter : parameters) {
+                        if (parameter.isAnnotationPresent(RequestParam.class)) {
+                            RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
+
+                            String name = requestParam.name();
+
+                            if (name.isEmpty()) name = parameter.getName();
+                            if (requestParam.required()) name = "required/" + name;
+
+                            requestType.put(name, parameter.getType());
+                        } else if (parameter.isAnnotationPresent(ResponseBody.class)) {
+                            ResponseBody responseBody = parameter.getAnnotation(ResponseBody.class);
+
+                            bodyType = parameter.getType();
+                        } else if (parameter.getType().equals(HttpServletRequest.class)) {
+                            isRequest = true;
+                        } else if (parameter.getType().equals(HttpServletResponse.class)) {
+                            isResponse = true;
+                        }
+
+
+                    }
+
                     if (httpType != null && content != null && !path.isEmpty()) {
                         if (!path.toString().startsWith("/")) path.insert(0, "/");
-                        HttpMethod httpMethod = new HttpMethod(content, httpType, beanName, method, path.toString(), method.getReturnType());
+                        
+                        HttpMethod httpMethod = new HttpMethod(content, httpType, beanName, method, path.toString(),
+                                method.getReturnType(), bodyType, requestType, isRequest, isResponse);
 
                         String key = httpType.getValue() + path;
 
