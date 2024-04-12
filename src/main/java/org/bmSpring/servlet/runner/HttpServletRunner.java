@@ -7,6 +7,4 @@ public interface HttpServletRunner {
 
     void runServlet(HttpServletRequestInfo request, HttpServletResponseInfo response, Object controller);
 
-    String createHttpMessage(int code);
-
 }
