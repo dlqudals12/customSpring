@@ -3,12 +3,13 @@ package org.bmSpring.servlet.model;
 import org.bmSpring.servlet.HttpMethod;
 import org.bmSpring.servlet.enums.MediaType;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class HttpServletRequest {
     private MediaType mediaType;
     private String controllerName;
-    private String methodName;
+    private Method method;
     private String path;
     private String remoteIp;
     private String host;
@@ -37,7 +38,7 @@ public class HttpServletRequest {
     public HttpServletRequest(HttpMethod httpMethod) {
         this.mediaType = httpMethod.getMediaType();
         this.controllerName = httpMethod.getControllerName();
-        this.methodName = httpMethod.getMethodName();
+        this.method = httpMethod.getMethod();
         this.path = httpMethod.getPath();
     }
 
@@ -60,8 +61,8 @@ public class HttpServletRequest {
         return controllerName;
     }
 
-    public String getMethodName() {
-        return methodName;
+    public Method getMethod() {
+        return method;
     }
 
     public String getPath() {
@@ -74,7 +75,7 @@ public class HttpServletRequest {
         return "HttpServletRequest{" +
                 "mediaType=" + mediaType +
                 ", controllerName='" + controllerName + '\'' +
-                ", methodName='" + methodName + '\'' +
+                ", methodName='" + method + '\'' +
                 ", path='" + path + '\'' +
                 ", remoteIp='" + remoteIp + '\'' +
                 ", host='" + host + '\'' +
