@@ -48,6 +48,7 @@ public class CreateServletModel {
             HttpServletRequestInfo httpServletRequestInfo = new HttpServletRequestInfo(httpMethod);
 
             HashMap<String, Object> headers = headers(in);
+
             Object responseBody = responseBody(in, httpMethod, objectMapper);
             List<Object> requestParams = requestParams(queryParams, httpMethod);
 

@@ -1,5 +1,6 @@
 package org.bmSpring.bean;
 
+import lombok.Getter;
 import org.bmSpring.annotations.Bean;
 import org.bmSpring.annotations.Qualifier;
 import org.bmSpring.annotations.component.Component;
@@ -13,6 +14,7 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 
 
+@Getter
 public class BeanFactory {
 
     private final HashMap<String, Object> beans = new HashMap<>();
@@ -113,10 +115,6 @@ public class BeanFactory {
         } catch (Exception e) {
             throw new RuntimeException();
         }
-    }
-
-    public HashMap<String, Object> getBeans() {
-        return beans;
     }
 
     public Object getBean(String controllerName) {
