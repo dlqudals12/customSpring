@@ -46,7 +46,7 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             out.println();
             out.println(dataJson);
             out.close();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             out.println(createHttpMessage(500));
             out.println("Content-Type: " + writer.getContentType());
             out.println();
