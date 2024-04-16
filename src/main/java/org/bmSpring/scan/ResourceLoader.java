@@ -1,5 +1,6 @@
 package org.bmSpring.scan;
 
+import lombok.Getter;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
@@ -9,11 +10,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
 public class ResourceLoader {
+    
+    @Getter
     private static Set<Class<?>> allClasses = new CopyOnWriteArraySet<>();
-
-    public static Set<Class<?>> getAllClasses() {
-        return allClasses;
-    }
 
     public static void register(Class<?> main) {
         Reflections reflections = new Reflections(main.getPackageName(), new SubTypesScanner(false));
