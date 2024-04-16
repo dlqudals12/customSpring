@@ -1,6 +1,7 @@
 package org.bmSpring.servlet.factory;
 
 import com.sun.jdi.request.DuplicateRequestException;
+import lombok.Getter;
 import org.bmSpring.annotations.component.Controller;
 import org.bmSpring.annotations.mapping.RequestMapping;
 import org.bmSpring.annotations.parameter.RequestParam;
@@ -19,6 +20,7 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Set;
 
+@Getter
 public class HttpServletFactoryImpl implements HttpServletFactory {
 
     private final HashMap<String, HttpMethod> mappings = new HashMap<>();
@@ -77,8 +79,6 @@ public class HttpServletFactoryImpl implements HttpServletFactory {
 
                             requestType.put(name, parameter.getType());
                         } else if (parameter.isAnnotationPresent(ResponseBody.class)) {
-                            ResponseBody responseBody = parameter.getAnnotation(ResponseBody.class);
-
                             bodyType = parameter.getType();
                         } else if (parameter.getType().equals(HttpServletRequest.class)) {
                             isRequest = true;
@@ -91,7 +91,7 @@ public class HttpServletFactoryImpl implements HttpServletFactory {
 
                     if (httpType != null && content != null && !path.isEmpty()) {
                         if (!path.toString().startsWith("/")) path.insert(0, "/");
-                        
+
                         HttpMethod httpMethod = new HttpMethod(content, httpType, beanName, method, path.toString(),
                                 method.getReturnType(), bodyType, requestType, isRequest, isResponse);
 
@@ -107,10 +107,6 @@ public class HttpServletFactoryImpl implements HttpServletFactory {
 
             }
         }
-    }
-
-    public HashMap<String, HttpMethod> getMappings() {
-        return mappings;
     }
 
     public HttpMethod getHttpMethod(String key) {

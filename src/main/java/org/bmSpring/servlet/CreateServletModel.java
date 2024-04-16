@@ -3,6 +3,7 @@ package org.bmSpring.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.Getter;
+import org.bmSpring.exception.ServletRequestNotFoundException;
 import org.bmSpring.servlet.enums.HttpType;
 import org.bmSpring.servlet.enums.MediaType;
 import org.bmSpring.servlet.factory.HttpServletFactory;
@@ -43,7 +44,7 @@ public class CreateServletModel {
 
             HttpMethod httpMethod = httpServletFactory.getHttpMethod(key);
 
-            if (httpMethod == null) throw new NullPointerException();
+            if (httpMethod == null) throw new ServletRequestNotFoundException();
 
             HttpServletRequestInfo httpServletRequestInfo = new HttpServletRequestInfo(httpMethod);
 
@@ -61,6 +62,7 @@ public class CreateServletModel {
             out.println("HTTP/1.1 500 SERVER_ERROR");
             out.println("Content-Type: " + MediaType.APPLICATION_JSON_VALUE.getContentName());
             out.println();
+            out.println(e.getMessage());
             out.close();
         }
     }

@@ -15,8 +15,7 @@ public class Cookie {
     private String path;
     private boolean httpOnly;
 
-    public String cookieString() {
-        StringBuilder builder = new StringBuilder();
+    public StringBuilder cookieString(StringBuilder builder) {
         builder.append(key).append("=").append(value);
 
         // 만료 시간이 있으면 추가
@@ -31,10 +30,10 @@ public class Cookie {
 
         // HTTP 전용 여부가 true이면 추가
         if (httpOnly) {
-            builder.append("; HttpOnly");
+            builder.append("; HttpOnly; ");
         }
 
-        return builder.toString();
+        return builder;
     }
 
     public static CookieBuilder builder() {

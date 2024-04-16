@@ -1,6 +1,7 @@
 package org.bmSpring.servlet.runner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bmSpring.servlet.model.Cookie;
 import org.bmSpring.servlet.model.HttpServletRequestInfo;
 import org.bmSpring.servlet.model.HttpServletResponseInfo;
 
@@ -39,10 +40,22 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
 
             //header
             for (Map.Entry<String, Object> headers : writer.getHeader().entrySet()) {
+                if (headers.getKey().equals("cookie") || headers.getKey().equals("Cookie")) continue;
+
                 String header = headers.getKey() + ": " + headers.getValue();
                 out.println(header);
             }
 
+            StringBuilder cookieBuilder = new StringBuilder();
+
+            cookieBuilder.append("Cookie: ");
+
+            //cookie
+            for (Cookie cookie : writer.getCookies()) {
+                cookie.cookieString(cookieBuilder);
+            }
+
+            out.println(cookieBuilder);
             out.println();
             out.println(dataJson);
             out.close();
@@ -50,10 +63,12 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             out.println(createHttpMessage(500));
             out.println("Content-Type: " + writer.getContentType());
             out.println();
+            out.println("Servlet Run Exception");
             out.close();
         }
     }
 
+    @SuppressWarnings("all")
     public String createHttpMessage(int code) {
         String msg = switch (code) {
             case 200 -> "OK";
