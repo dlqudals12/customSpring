@@ -2,6 +2,9 @@ package org.bmSpring.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmSpring.bean.BeanFactory;
+import org.bmSpring.exception.ServletException;
+import org.bmSpring.exception.enums.ExceptionCode;
+import org.bmSpring.servlet.enums.MediaType;
 import org.bmSpring.servlet.factory.HttpServletFactory;
 import org.bmSpring.servlet.factory.HttpServletFactoryImpl;
 import org.bmSpring.servlet.model.HttpMethod;
@@ -49,10 +52,19 @@ public class HttpServletContext {
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 
                 new Thread(() -> {
-                    CreateServletModel httpModel = new CreateServletModel(in, out, httpServletFactory);
+                    try {
+                        CreateServletModel httpModel = new CreateServletModel(in, out, httpServletFactory);
 
-                    runner.runServlet(httpModel.getHttpServletRequestInfo(), httpModel.getHttpServletResponseInfo(),
-                            beanFactory.getBean(httpModel.getHttpServletRequestInfo().getControllerName()));
+                        runner.runServlet(httpModel.getHttpServletRequestInfo(), httpModel.getHttpServletResponseInfo(),
+                                beanFactory.getBean(httpModel.getHttpServletRequestInfo().getControllerName()));
+                    } catch (ServletException e) {
+                        ExceptionCode code = e.getExceptionCode();
+                        out.println(String.format("HTTP/1.1 %d %s", code.getCode(), code.getMsg()));
+                        out.println("Content-Type: " + MediaType.APPLICATION_JSON_VALUE.getContentName());
+                        out.println();
+                        out.println(e.getMessage());
+                        out.close();
+                    }
                 }).start();
             }
 

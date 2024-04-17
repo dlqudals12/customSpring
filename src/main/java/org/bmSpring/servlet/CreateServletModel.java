@@ -3,9 +3,9 @@ package org.bmSpring.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.Getter;
-import org.bmSpring.exception.ServletRequestNotFoundException;
+import org.bmSpring.exception.HttpEmptyPathException;
+import org.bmSpring.exception.HttpRequestException;
 import org.bmSpring.servlet.enums.HttpType;
-import org.bmSpring.servlet.enums.MediaType;
 import org.bmSpring.servlet.factory.HttpServletFactory;
 import org.bmSpring.servlet.model.HttpMethod;
 import org.bmSpring.servlet.model.HttpServletRequestInfo;
@@ -44,7 +44,7 @@ public class CreateServletModel {
 
             HttpMethod httpMethod = httpServletFactory.getHttpMethod(key);
 
-            if (httpMethod == null) throw new ServletRequestNotFoundException();
+            if (httpMethod == null) throw new HttpEmptyPathException();
 
             HttpServletRequestInfo httpServletRequestInfo = new HttpServletRequestInfo(httpMethod);
 
@@ -58,12 +58,11 @@ public class CreateServletModel {
 
             this.httpServletRequestInfo = httpServletRequestInfo;
             this.httpServletResponseInfo = new HttpServletResponseInfo(out, httpMethod, headers, httpServletRequestInfo.getCookies());
+
+        } catch (HttpEmptyPathException e) {
+            throw new HttpEmptyPathException();
         } catch (Exception e) {
-            out.println("HTTP/1.1 500 SERVER_ERROR");
-            out.println("Content-Type: " + MediaType.APPLICATION_JSON_VALUE.getContentName());
-            out.println();
-            out.println(e.getMessage());
-            out.close();
+            throw new HttpRequestException();
         }
     }
 

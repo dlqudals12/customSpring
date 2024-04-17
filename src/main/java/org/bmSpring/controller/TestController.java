@@ -2,6 +2,7 @@ package org.bmSpring.controller;
 
 import org.bmSpring.annotations.component.Controller;
 import org.bmSpring.annotations.mapping.*;
+import org.bmSpring.annotations.parameter.RequestParam;
 import org.bmSpring.servlet.enums.HttpType;
 
 @Controller
@@ -28,8 +29,9 @@ public class TestController {
 
     }
 
-    @RequestMapping(value = "/requet", type = HttpType.PATCH)
-    public void test43() {
-
+    @RequestMapping(value = "/request", type = HttpType.GET)
+    public TestDto test43(@RequestParam String name) {
+        System.out.printf("INVOKE : -> %s \n", name);
+        return new TestDto(name);
     }
 }

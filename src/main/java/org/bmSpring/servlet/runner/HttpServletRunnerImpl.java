@@ -1,6 +1,7 @@
 package org.bmSpring.servlet.runner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bmSpring.exception.HttpServerException;
 import org.bmSpring.servlet.model.Cookie;
 import org.bmSpring.servlet.model.HttpServletRequestInfo;
 import org.bmSpring.servlet.model.HttpServletResponseInfo;
@@ -60,11 +61,8 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             out.println(dataJson);
             out.close();
         } catch (Throwable e) {
-            out.println(createHttpMessage(500));
-            out.println("Content-Type: " + writer.getContentType());
-            out.println();
-            out.println("Servlet Run Exception");
-            out.close();
+            e.printStackTrace();
+            throw new HttpServerException();
         }
     }
 
