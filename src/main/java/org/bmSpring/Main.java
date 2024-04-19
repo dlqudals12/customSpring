@@ -1,11 +1,11 @@
 package org.bmSpring;
 
-import org.bmSpring.container.CustomApplication;
+import org.bmSpring.container.CustomSpringBootApplication;
 
 public class Main {
 
     public static void main(String[] args) {
-        CustomApplication.run(Main.class, args);
+        CustomSpringBootApplication.run(Main.class, args);
     }
 
 }

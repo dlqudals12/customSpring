@@ -6,7 +6,7 @@ import org.bmSpring.servlet.HttpServletContext;
 
 import java.util.HashMap;
 
-public class CustomApplication {
+public class CustomSpringBootApplication {
 
     public static void run(Class<?> main, String[] args) {
         ResourceLoader.register(main);
