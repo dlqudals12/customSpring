@@ -33,7 +33,7 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             if (reader.isHttpServletRequest()) parameters.add(reader);
             if (reader.isHttpServletResponse()) parameters.add(writer);
 
-            Object invoke = parameters.isEmpty() ? method.invoke(controller) : method.invoke(controller, parameters);
+            Object invoke = parameters.isEmpty() ? method.invoke(controller) : method.invoke(controller, parameters.toArray(new Object[0]));
 
             String dataJson = objectMapper.writeValueAsString(invoke);
 
