@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 
 @Getter
-@SuppressWarnings("all")
 public class HttpServletRequestInfo implements HttpServletRequest {
     private MediaType mediaType;
     private String controllerName;
@@ -62,9 +61,12 @@ public class HttpServletRequestInfo implements HttpServletRequest {
         this.acceptLanguage = header.get("accept-language").toString();
     }
 
-    public void setParameters(Object responseBody, List<Object> requestParam) {
+    public void setResponseBody(Object responseBody) {
         this.responseBody = responseBody;
-        this.requestParams = requestParam;
+    }
+
+    public void setRequestParams(List<Object> requestParams) {
+        this.requestParams = requestParams;
     }
 
     @Override

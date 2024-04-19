@@ -10,6 +10,7 @@ import org.bmSpring.servlet.factory.HttpServletFactory;
 import org.bmSpring.servlet.model.HttpMethod;
 import org.bmSpring.servlet.model.HttpServletRequestInfo;
 import org.bmSpring.servlet.model.HttpServletResponseInfo;
+import org.bmSpring.util.DefaultUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,7 +55,9 @@ public class CreateServletModel {
             List<Object> requestParams = requestParams(queryParams, httpMethod);
 
             httpServletRequestInfo.newRequest(headers);
-            httpServletRequestInfo.setParameters(responseBody, requestParams);
+            if (!httpMethod.getRequestParam().isEmpty()) httpServletRequestInfo.setRequestParams(requestParams);
+            if (httpMethod.getBodyType() != null) httpServletRequestInfo.setResponseBody(responseBody);
+
 
             this.httpServletRequestInfo = httpServletRequestInfo;
             this.httpServletResponseInfo = new HttpServletResponseInfo(out, httpMethod, headers, httpServletRequestInfo.getCookies());
@@ -101,12 +104,16 @@ public class CreateServletModel {
             }
 
             Object value = requestParam.get(requestKey);
+            Class<?> type = requestEntry.getValue();
 
-            if (required && value == null) {
-                throw new InvalidRequestStateException();
-            } else if (value != null) {
-                requestValues.add(requestEntry.getValue().cast(value));
-            }
+            if (required && value == null) throw new InvalidRequestStateException();
+            else if (value == null) {
+                if (type.isPrimitive()) {
+                    requestValues.add(DefaultUtil.defaultValue(type));
+                } else {
+                    requestValues.add(type.cast(null));
+                }
+            } else requestValues.add(type.cast(value));
         }
         return requestValues;
     }
