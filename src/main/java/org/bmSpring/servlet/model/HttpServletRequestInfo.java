@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Getter
+@SuppressWarnings("all")
 public class HttpServletRequestInfo implements HttpServletRequest {
     private MediaType mediaType;
     private String controllerName;
