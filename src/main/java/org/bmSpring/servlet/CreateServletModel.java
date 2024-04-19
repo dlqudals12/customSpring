@@ -23,8 +23,8 @@ import java.util.Map;
 @Getter
 public class CreateServletModel {
 
-    private HttpServletRequestInfo httpServletRequestInfo;
-    private HttpServletResponseInfo httpServletResponseInfo;
+    private final HttpServletRequestInfo httpServletRequestInfo;
+    private final HttpServletResponseInfo httpServletResponseInfo;
 
     public CreateServletModel(BufferedReader in, PrintWriter out, HttpServletFactory httpServletFactory) {
         try {
@@ -58,10 +58,8 @@ public class CreateServletModel {
             if (!httpMethod.getRequestParam().isEmpty()) httpServletRequestInfo.setRequestParams(requestParams);
             if (httpMethod.getBodyType() != null) httpServletRequestInfo.setResponseBody(responseBody);
 
-
             this.httpServletRequestInfo = httpServletRequestInfo;
             this.httpServletResponseInfo = new HttpServletResponseInfo(out, httpMethod, headers, httpServletRequestInfo.getCookies());
-
         } catch (HttpEmptyPathException e) {
             throw new HttpEmptyPathException();
         } catch (Exception e) {
