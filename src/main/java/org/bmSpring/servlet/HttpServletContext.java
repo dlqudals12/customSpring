@@ -8,6 +8,7 @@ import org.bmSpring.servlet.enums.MediaType;
 import org.bmSpring.servlet.factory.HttpServletFactory;
 import org.bmSpring.servlet.factory.HttpServletFactoryImpl;
 import org.bmSpring.servlet.model.HttpMethod;
+import org.bmSpring.servlet.model.ThreadPool;
 import org.bmSpring.servlet.runner.HttpServletRunner;
 import org.bmSpring.servlet.runner.HttpServletRunnerImpl;
 
@@ -22,6 +23,7 @@ public class HttpServletContext {
     private final BeanFactory beanFactory;
     private final HttpServletFactory httpServletFactory;
     private final HttpServletRunner runner;
+    private final ThreadPool threadPool;
 
     public HttpServletContext(BeanFactory beanFactory) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -29,6 +31,7 @@ public class HttpServletContext {
         this.beanFactory = beanFactory;
         this.httpServletFactory = new HttpServletFactoryImpl();
         this.runner = new HttpServletRunnerImpl(objectMapper);
+        this.threadPool = new ThreadPool(500);
 
         for (Map.Entry<String, HttpMethod> mapping : httpServletFactory.getMappings().entrySet()) {
             System.out.printf("HTTP Type: %s >> HTTP Path: %s \n", mapping.getValue().getHttpType(), mapping.getKey());
@@ -38,10 +41,11 @@ public class HttpServletContext {
     @SuppressWarnings("all")
     public void waitServer() {
         try {
+            threadPool.start();
+
             ServerSocket serverSocket = new ServerSocket(19050);
 
             while (true) {
-                System.out.println("Connection wait");
                 Socket socket = serverSocket.accept();
 
                 InetSocketAddress remoteSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
@@ -51,7 +55,7 @@ public class HttpServletContext {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-                new Thread(() -> {
+                Thread thread = new Thread(() -> {
                     try {
                         CreateServletModel httpModel = new CreateServletModel(in, out, httpServletFactory);
 
@@ -64,11 +68,18 @@ public class HttpServletContext {
                         out.println();
                         out.println(e.getMessage());
                         out.close();
+                    } finally {
                     }
-                }).start();
+                });
+
+                System.out.println("AAAAAAAAAAAADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+                threadPool.addThread(thread);
+                System.out.println("END");
             }
 
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

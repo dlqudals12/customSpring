@@ -72,7 +72,6 @@ public class CreateServletModel {
 
         String headerLine;
         while ((headerLine = in.readLine()) != null && !headerLine.isEmpty()) {
-            System.out.println(headerLine);
             String[] mapArray = headerLine.split(": ");
             headerMap.put(mapArray[0], mapArray[1]);
         }
