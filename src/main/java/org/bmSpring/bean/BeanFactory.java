@@ -44,8 +44,7 @@ public class BeanFactory {
             classBeans.add(componentClass);
         }
 
-        //config class bean 등록
-
+        //bean 의존성 자동 주입
         for (BeanMethod beanMethod : beanMethods) {
             if (beans.containsKey(beanMethod.getBeanName())) continue;
 
@@ -55,6 +54,11 @@ public class BeanFactory {
         classBeans.forEach(this::putBeans);
     }
 
+    /**
+     * Component annotation bean 주입
+     *
+     * @param beanClass
+     */
     private void putBeans(Class<?> beanClass) {
         String name = "";
 
@@ -67,13 +71,12 @@ public class BeanFactory {
 
         if (name.isEmpty()) name = beanClass.getSimpleName();
 
-        System.out.println(name);
-
         if (beans.get(name) == null) {
             try {
                 Constructor<?> constructor = beanClass.getDeclaredConstructors()[0];
                 Class<?>[] parameterTypes = constructor.getParameterTypes();
 
+                //roof
                 for (Class<?> parameterType : parameterTypes) {
                     if (!beans.containsKey(parameterType.getSimpleName())) putBeans(parameterType);
                 }
@@ -87,8 +90,16 @@ public class BeanFactory {
         }
     }
 
+    /**
+     * Bean annotation으로 설정되어 있는 method bean 주입
+     *
+     * @param beanMethods
+     * @param beanMethod
+     * @param classBeans
+     */
     private void putBeans(List<BeanMethod> beanMethods, BeanMethod beanMethod, Set<Class<?>> classBeans) {
-        System.out.println(beanMethod.getBeanName());
+
+        //등록하려는 bean의 class가 등록되어 있지 않으면 class주입
         if (beans.get(beanMethod.getClassName()) == null)
             putBeans(classBeans.stream().filter(c -> c.getSimpleName().equals(beanMethod.getClassName())).findFirst().orElseThrow(NullPointerException::new));
 
@@ -124,12 +135,11 @@ public class BeanFactory {
 
             beans.put(beanMethod.getBeanName(), bean);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException();
         }
     }
 
-    public Object getBean(String controllerName) {
-        return beans.get(controllerName);
+    public Object getBean(String beanName) {
+        return beans.get(beanName);
     }
 }
