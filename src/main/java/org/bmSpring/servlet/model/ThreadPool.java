@@ -12,22 +12,26 @@ public class ThreadPool {
     private int threadCount = 50;
 
     @Getter
-    private long inProgressCount = 0;
+    private int waitQueueSize = 100;
 
     public ThreadPool() {
         this.waitQueue = new ArrayBlockingQueue<>(100);
+        start();
     }
 
     public ThreadPool(int queueSize) {
         this.waitQueue = new ArrayBlockingQueue<>(queueSize);
+        start();
     }
 
     public ThreadPool(int queueSize, int threadCount) {
         this.waitQueue = new ArrayBlockingQueue<>(queueSize);
         this.threadCount = threadCount;
+        this.waitQueueSize = queueSize;
+        start();
     }
 
-    public void start() {
+    private void start() {
         for (int i = 0; i < threadCount; i++) {
             new Thread(() -> {
                 while (true) {
@@ -48,13 +52,4 @@ public class ThreadPool {
             waitQueue.add(thread);
         }).start();
     }
-
-    private synchronized void plusProgressCount() {
-        inProgressCount++;
-    }
-
-    public synchronized void minusProgressCount() {
-        inProgressCount--;
-    }
-
 }

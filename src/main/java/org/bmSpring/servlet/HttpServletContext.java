@@ -31,7 +31,6 @@ public class HttpServletContext {
         this.httpServletFactory = new HttpServletFactoryImpl();
         this.runner = new HttpServletRunnerImpl(objectMapper);
         this.threadPool = new ThreadPool(500);
-        threadPool.start();
 
         for (Map.Entry<String, HttpMethod> mapping : httpServletFactory.getMappings().entrySet()) {
             System.out.printf("HTTP Type: %s >> HTTP Path: %s \n", mapping.getValue().getHttpType(), mapping.getKey());
