@@ -22,13 +22,13 @@ public class BeanFactory {
     public BeanFactory() {
         Set<Class<?>> componentClasses = ResourceLoader.classesContainsAnnotation(Component.class);
 
+        Set<Class<?>> classBeans = new HashSet<>();
         List<BeanMethod> beanMethods = new ArrayList<>();
 
         for (Class<?> componentClass : componentClasses) {
             if (componentClass.isAnnotationPresent(Configuration.class)) {
                 Method[] methods = componentClass.getMethods();
                 String configName = componentClass.getAnnotation(Configuration.class).name();
-
 
                 for (Method method : methods) {
                     if (method.isAnnotationPresent(Bean.class)) {
@@ -41,14 +41,18 @@ public class BeanFactory {
                 }
             }
 
-            putBeans(componentClass);
+            classBeans.add(componentClass);
         }
+
+        //config class bean 등록
 
         for (BeanMethod beanMethod : beanMethods) {
             if (beans.containsKey(beanMethod.getBeanName())) continue;
 
-            putBeans(beanMethods, beanMethod);
+            putBeans(beanMethods, beanMethod, classBeans);
         }
+
+        classBeans.forEach(this::putBeans);
     }
 
     private void putBeans(Class<?> beanClass) {
@@ -63,23 +67,30 @@ public class BeanFactory {
 
         if (name.isEmpty()) name = beanClass.getSimpleName();
 
-        try {
-            Constructor<?> constructor = beanClass.getDeclaredConstructors()[0];
-            Class<?>[] parameterTypes = constructor.getParameterTypes();
+        System.out.println(name);
 
-            for (Class<?> parameterType : parameterTypes) {
-                if (!beans.containsKey(parameterType.getSimpleName())) putBeans(parameterType);
+        if (beans.get(name) == null) {
+            try {
+                Constructor<?> constructor = beanClass.getDeclaredConstructors()[0];
+                Class<?>[] parameterTypes = constructor.getParameterTypes();
+
+                for (Class<?> parameterType : parameterTypes) {
+                    if (!beans.containsKey(parameterType.getSimpleName())) putBeans(parameterType);
+                }
+
+                Object bean = constructor.newInstance(Arrays.stream(parameterTypes).map(pa -> beans.get(pa.getSimpleName())).toArray());
+
+                beans.put(name, bean);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-
-            Object bean = constructor.newInstance(Arrays.stream(parameterTypes).map(pa -> beans.get(pa.getSimpleName())).toArray());
-
-            beans.put(name, bean);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
-    private void putBeans(List<BeanMethod> beanMethods, BeanMethod beanMethod) {
+    private void putBeans(List<BeanMethod> beanMethods, BeanMethod beanMethod, Set<Class<?>> classBeans) {
+        System.out.println(beanMethod.getBeanName());
+        if (beans.get(beanMethod.getClassName()) == null)
+            putBeans(classBeans.stream().filter(c -> c.getSimpleName().equals(beanMethod.getClassName())).findFirst().orElseThrow(NullPointerException::new));
 
         Method method = beanMethod.getMethod();
 
@@ -100,7 +111,7 @@ public class BeanFactory {
 
                     BeanMethod filterMethod = beanMethods.stream().filter(parameterMethod -> parameterMethod.getBeanName().equals(finalParameterBeanName)).findFirst().orElseThrow(NullPointerException::new);
 
-                    putBeans(beanMethods, filterMethod);
+                    putBeans(beanMethods, filterMethod, classBeans);
                 } else parameterBeanNames.add(parameterBeanName);
             }
 
@@ -113,6 +124,7 @@ public class BeanFactory {
 
             beans.put(beanMethod.getBeanName(), bean);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }

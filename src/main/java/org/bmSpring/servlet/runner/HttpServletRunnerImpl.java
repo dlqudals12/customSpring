@@ -61,7 +61,6 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             out.println(dataJson);
             out.close();
         } catch (Throwable e) {
-            e.printStackTrace();
             throw new HttpServerException();
         }
     }

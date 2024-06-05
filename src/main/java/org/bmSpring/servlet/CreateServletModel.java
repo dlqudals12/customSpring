@@ -30,17 +30,20 @@ public class CreateServletModel {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
+            //GET /maps/request?name=front HTTP/1.1
             String requestInfo = in.readLine();
             String[] split = requestInfo.split(" ");
             String uri = split[1];
             String queryParams = "";
 
+            //?name=front
             if (uri.contains("?")) {
                 String[] splitUri = uri.split("\\?");
                 uri = splitUri[0];
                 queryParams = splitUri[1];
             }
 
+            //GET
             String key = HttpType.valueOf(split[0]).getValue() + uri;
 
             HttpMethod httpMethod = httpServletFactory.getHttpMethod(key);

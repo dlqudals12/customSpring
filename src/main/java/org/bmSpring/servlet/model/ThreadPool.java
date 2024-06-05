@@ -6,38 +6,47 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class ThreadPool {
 
-    private final ArrayBlockingQueue<Thread> threadPool;
+    private final ArrayBlockingQueue<Thread> waitQueue;
+
+    @Getter
+    private int threadCount = 50;
 
     @Getter
     private long inProgressCount = 0;
 
     public ThreadPool() {
-        this.threadPool = new ArrayBlockingQueue<>(100);
+        this.waitQueue = new ArrayBlockingQueue<>(100);
     }
 
     public ThreadPool(int queueSize) {
-        this.threadPool = new ArrayBlockingQueue<>(queueSize);
+        this.waitQueue = new ArrayBlockingQueue<>(queueSize);
+    }
+
+    public ThreadPool(int queueSize, int threadCount) {
+        this.waitQueue = new ArrayBlockingQueue<>(queueSize);
+        this.threadCount = threadCount;
     }
 
     public void start() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    System.out.println("ThreadPool Wait");
-                    Thread take = threadPool.take();
+        for (int i = 0; i < threadCount; i++) {
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        Thread take = waitQueue.take();
 
-                    System.out.println("ThreadPool Start");
-                    System.out.println(inProgressCount);
-                    take.start();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                        take.start();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
-    public void addThread(Thread thread) throws InterruptedException {
-        threadPool.put(thread);
+    public void addThread(Thread thread) {
+        new Thread(() -> {
+            waitQueue.add(thread);
+        }).start();
     }
 
     private synchronized void plusProgressCount() {

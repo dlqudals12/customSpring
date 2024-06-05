@@ -13,7 +13,6 @@ import org.bmSpring.servlet.runner.HttpServletRunner;
 import org.bmSpring.servlet.runner.HttpServletRunnerImpl;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -32,6 +31,7 @@ public class HttpServletContext {
         this.httpServletFactory = new HttpServletFactoryImpl();
         this.runner = new HttpServletRunnerImpl(objectMapper);
         this.threadPool = new ThreadPool(500);
+        threadPool.start();
 
         for (Map.Entry<String, HttpMethod> mapping : httpServletFactory.getMappings().entrySet()) {
             System.out.printf("HTTP Type: %s >> HTTP Path: %s \n", mapping.getValue().getHttpType(), mapping.getKey());
@@ -41,22 +41,27 @@ public class HttpServletContext {
     @SuppressWarnings("all")
     public void waitServer() {
         try {
-            threadPool.start();
-
             ServerSocket serverSocket = new ServerSocket(19050);
 
             while (true) {
                 Socket socket = serverSocket.accept();
 
-                InetSocketAddress remoteSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+                Thread runnable = new Thread(() -> {
+                    boolean isIOException = false;
 
-                System.out.println("Connected: " + remoteSocketAddress.getHostName());
+                    BufferedReader in = null;
+                    PrintWriter out = null;
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-
-                Thread thread = new Thread(() -> {
                     try {
+                        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+                    } catch (IOException e) {
+                        isIOException = true;
+                    }
+
+                    try {
+                        if (isIOException) throw new ServletException(ExceptionCode.NOT_FOUND);
+
                         CreateServletModel httpModel = new CreateServletModel(in, out, httpServletFactory);
 
                         runner.runServlet(httpModel.getHttpServletRequestInfo(), httpModel.getHttpServletResponseInfo(),
@@ -68,18 +73,13 @@ public class HttpServletContext {
                         out.println();
                         out.println(e.getMessage());
                         out.close();
-                    } finally {
                     }
                 });
 
-                System.out.println("AAAAAAAAAAAADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-                threadPool.addThread(thread);
-                System.out.println("END");
+                threadPool.addThread(runnable);
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

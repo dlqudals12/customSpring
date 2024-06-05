@@ -32,6 +32,7 @@ public class TestController {
     @RequestMapping(value = "/request", type = HttpType.GET)
     public TestDto test43(@RequestParam String name) throws InterruptedException {
         System.out.printf("INVOKE : -> %s \n", name);
+        System.out.println(Thread.currentThread().getName());
         Thread.sleep(10000);
         return new TestDto(name);
     }

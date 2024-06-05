@@ -1,7 +1,10 @@
 package org.bmSpring.bean;
 
+import lombok.Getter;
+
 import java.lang.reflect.Method;
 
+@Getter
 public class BeanMethod {
     private final String className;
     private final String beanName;
@@ -15,19 +18,4 @@ public class BeanMethod {
         this.returnType = returnType;
     }
 
-    public String getClassName() {
-        return className;
-    }
-
-    public String getBeanName() {
-        return beanName;
-    }
-
-    public Method getMethod() {
-        return method;
-    }
-
-    public Class<?> getReturnType() {
-        return returnType;
-    }
 }
