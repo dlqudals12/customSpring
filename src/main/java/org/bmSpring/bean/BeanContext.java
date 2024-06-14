@@ -111,7 +111,7 @@ public class BeanContext {
             List<String> parameterBeanNames = new ArrayList<>();
 
             for (Parameter parameter : parameters) {
-                String parameterBeanName = "";
+                String parameterBeanName;
 
                 if (parameter.isAnnotationPresent(Qualifier.class))
                     parameterBeanName = parameter.getAnnotation(Qualifier.class).value();
