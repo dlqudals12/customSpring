@@ -58,9 +58,9 @@ public class HttpServletContext {
                         isIOException = true;
                     }
 
+                    if (isIOException) throw new ServletException(ExceptionCode.NOT_FOUND);
+                    
                     try {
-                        if (isIOException) throw new ServletException(ExceptionCode.NOT_FOUND);
-
                         CreateServletModel httpModel = new CreateServletModel(in, out, httpServletFactory);
 
                         runner.runServlet(httpModel.getHttpServletRequestInfo(), httpModel.getHttpServletResponseInfo(),
