@@ -15,9 +15,7 @@ import org.bmSpring.util.DefaultUtil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -55,7 +53,7 @@ public class CreateServletModel {
             HashMap<String, Object> headers = headers(in);
 
             Object responseBody = responseBody(in, httpMethod, objectMapper);
-            List<Object> requestParams = requestParams(queryParams, httpMethod);
+            Map<String, Object> requestParams = requestParams(queryParams, httpMethod);
 
             httpServletRequestInfo.newRequest(headers);
             if (!httpMethod.getRequestParam().isEmpty()) httpServletRequestInfo.setRequestParams(requestParams);
@@ -81,7 +79,7 @@ public class CreateServletModel {
         return headerMap;
     }
 
-    public List<Object> requestParams(String queryParams, HttpMethod httpMethod) {
+    public HashMap<String, Object> requestParams(String queryParams, HttpMethod httpMethod) {
         HashMap<String, Object> requestParam = new HashMap<>();
 
         String[] splitParameters = queryParams.split("&");
@@ -92,7 +90,7 @@ public class CreateServletModel {
             requestParam.put(splitParams[0], splitParams[1]);
         }
 
-        List<Object> requestValues = new ArrayList<>();
+        HashMap<String, Object> requestValues = new HashMap<>();
 
         for (Map.Entry<String, Class<?>> requestEntry : httpMethod.getRequestParam().entrySet()) {
             String requestKey = requestEntry.getKey();
@@ -109,11 +107,11 @@ public class CreateServletModel {
             if (required && value == null) throw new InvalidRequestStateException();
             else if (value == null) {
                 if (type.isPrimitive()) {
-                    requestValues.add(DefaultUtil.defaultValue(type));
+                    requestValues.put(requestKey, DefaultUtil.defaultValue(type));
                 } else {
-                    requestValues.add(type.cast(null));
+                    requestValues.put(requestKey, type.cast(null));
                 }
-            } else requestValues.add(type.cast(value));
+            } else requestValues.put(requestKey, type.cast(value));
         }
         return requestValues;
     }

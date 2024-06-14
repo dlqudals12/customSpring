@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class HttpServletRequestInfo implements HttpServletRequest {
@@ -19,7 +20,7 @@ public class HttpServletRequestInfo implements HttpServletRequest {
     private String acceptLanguage;
     private List<Cookie> cookies;
     private Object responseBody;
-    private List<Object> requestParams;
+    private Map<String, Object> requestParams;
     private boolean isHttpServletRequest;
     private boolean isHttpServletResponse;
 
@@ -65,7 +66,7 @@ public class HttpServletRequestInfo implements HttpServletRequest {
         this.responseBody = responseBody;
     }
 
-    public void setRequestParams(List<Object> requestParams) {
+    public void setRequestParams(Map<String, Object> requestParams) {
         this.requestParams = requestParams;
     }
 

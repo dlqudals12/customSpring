@@ -4,6 +4,8 @@ import org.bmSpring.annotations.component.Controller;
 import org.bmSpring.annotations.mapping.*;
 import org.bmSpring.annotations.parameter.RequestParam;
 import org.bmSpring.servlet.enums.HttpType;
+import org.bmSpring.servlet.model.HttpServletRequest;
+import org.bmSpring.servlet.model.HttpServletResponse;
 
 @Controller
 @RequestMapping("/maps")
@@ -30,9 +32,12 @@ public class TestController {
     }
 
     @RequestMapping(value = "/request", type = HttpType.GET)
-    public TestDto test43(@RequestParam String name) throws InterruptedException {
-        System.out.printf("INVOKE : -> %s \n", name);
-        Thread.sleep(10000);
+    public TestDto test43(@RequestParam String name, HttpServletRequest request, @RequestParam(required = false) String path, HttpServletResponse response) throws InterruptedException {
+        System.out.println("REQUEST: " + request.getHost());
+        System.out.println("RESPONSE: " + response.getContentType());
+        System.out.println("PATH: " + path);
+        System.out.println("NAME: " + name);
+        System.out.printf("INVOKE : -> %s %s \n", name, path);
         return new TestDto(name);
     }
 }
