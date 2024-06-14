@@ -1,7 +1,7 @@
 package org.bmSpring.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bmSpring.bean.BeanFactory;
+import org.bmSpring.bean.BeanCreater;
 import org.bmSpring.exception.ServletException;
 import org.bmSpring.exception.enums.ExceptionCode;
 import org.bmSpring.servlet.enums.MediaType;
@@ -19,15 +19,15 @@ import java.util.Map;
 
 public class HttpServletContext {
 
-    private final BeanFactory beanFactory;
+    private final BeanCreater beanCreater;
     private final HttpServletFactory httpServletFactory;
     private final HttpServletRunner runner;
     private final ThreadPool threadPool;
 
-    public HttpServletContext(BeanFactory beanFactory) {
+    public HttpServletContext(BeanCreater beanCreater) {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        this.beanFactory = beanFactory;
+        this.beanCreater = beanCreater;
         this.httpServletFactory = new HttpServletFactoryImpl();
         this.runner = new HttpServletRunnerImpl(objectMapper);
         this.threadPool = new ThreadPool(500);
@@ -64,7 +64,7 @@ public class HttpServletContext {
                         CreateServletModel httpModel = new CreateServletModel(in, out, httpServletFactory);
 
                         runner.runServlet(httpModel.getHttpServletRequestInfo(), httpModel.getHttpServletResponseInfo(),
-                                beanFactory.getBean(httpModel.getHttpServletRequestInfo().getControllerName()));
+                                beanCreater.getBean(httpModel.getHttpServletRequestInfo().getControllerName()));
                     } catch (ServletException e) {
                         ExceptionCode code = e.getExceptionCode();
                         out.println(String.format("HTTP/1.1 %d %s", code.getCode(), code.getMsg()));

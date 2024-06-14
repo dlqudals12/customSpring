@@ -1,6 +1,6 @@
 package org.bmSpring.container;
 
-import org.bmSpring.bean.BeanFactory;
+import org.bmSpring.bean.BeanCreater;
 import org.bmSpring.scan.ResourceLoader;
 import org.bmSpring.servlet.HttpServletContext;
 
@@ -15,15 +15,15 @@ public class CustomSpringBootApplication {
             System.out.println("Load Resource: " + c.getName());
         }
 
-        BeanFactory beanFactory = new BeanFactory();
+        BeanCreater beanCreater = new BeanCreater();
 
-        HashMap<String, Object> beans = beanFactory.getBeans();
+        HashMap<String, Object> beans = beanCreater.getBeans();
 
         for (String body : beans.keySet()) {
             System.out.println("Load Beans: " + body);
         }
 
-        HttpServletContext httpServletContext = new HttpServletContext(beanFactory);
+        HttpServletContext httpServletContext = new HttpServletContext(beanCreater);
 
         httpServletContext.waitServer();
     }
