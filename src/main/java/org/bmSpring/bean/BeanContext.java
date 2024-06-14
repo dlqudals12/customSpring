@@ -15,11 +15,11 @@ import java.util.*;
 
 
 @Getter
-public class BeanCreater {
+public class BeanContext {
 
     private final HashMap<String, Object> beans = new HashMap<>();
 
-    public BeanCreater() {
+    public BeanContext() {
         Set<Class<?>> componentClasses = ResourceLoader.classesContainsAnnotation(Component.class);
 
         Set<Class<?>> classBeans = new HashSet<>();
