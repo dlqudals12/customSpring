@@ -118,9 +118,7 @@ public class BeanContext {
                 else parameterBeanName = parameter.getName();
 
                 if (!beans.containsKey(parameterBeanName)) {
-                    String finalParameterBeanName = parameterBeanName;
-
-                    BeanMethod filterMethod = beanMethods.stream().filter(parameterMethod -> parameterMethod.getBeanName().equals(finalParameterBeanName)).findFirst().orElseThrow(NullPointerException::new);
+                    BeanMethod filterMethod = beanMethods.stream().filter(parameterMethod -> parameterMethod.getBeanName().equals(parameterBeanName)).findFirst().orElseThrow(NullPointerException::new);
 
                     putBeans(beanMethods, filterMethod, classBeans);
                 } else parameterBeanNames.add(parameterBeanName);
