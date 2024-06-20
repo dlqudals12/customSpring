@@ -1,6 +1,6 @@
 package org.bmSpring.exception;
 
-import org.bmSpring.exception.enums.ExceptionCode;
+import org.bmSpring.exception.enums.ServletExceptionCode;
 
 import java.io.Serial;
 
@@ -9,14 +9,14 @@ public class ServletException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 7609810042086457429L;
-    private final ExceptionCode exceptionCode;
+    private final ServletExceptionCode servletExceptionCode;
 
-    public ServletException(ExceptionCode exceptionCode) {
-        super(exceptionCode.getMsg());
-        this.exceptionCode = exceptionCode;
+    public ServletException(ServletExceptionCode servletExceptionCode) {
+        super(servletExceptionCode.getMsg());
+        this.servletExceptionCode = servletExceptionCode;
     }
 
-    public ExceptionCode getExceptionCode() {
-        return exceptionCode;
+    public ServletExceptionCode getExceptionCode() {
+        return servletExceptionCode;
     }
 }

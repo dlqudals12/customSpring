@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ExceptionCode {
+public enum ServletExceptionCode {
     NOT_FOUND(404, "NOT_FOUND"),
     SERVER_ERROR(500, "SERVER_ERROR"),
     REQUEST_ERROR(400, "REQUEST_ERROR");

@@ -1,6 +1,6 @@
 package org.bmSpring.exception;
 
-import org.bmSpring.exception.enums.ExceptionCode;
+import org.bmSpring.exception.enums.ServletExceptionCode;
 
 import java.io.Serial;
 
@@ -9,6 +9,6 @@ public class HttpRequestException extends ServletException {
     private static final long serialVersionUID = 3971421693561209559L;
 
     public HttpRequestException() {
-        super(ExceptionCode.REQUEST_ERROR);
+        super(ServletExceptionCode.REQUEST_ERROR);
     }
 }

@@ -6,6 +6,8 @@ import org.bmSpring.annotations.Qualifier;
 import org.bmSpring.annotations.component.Component;
 import org.bmSpring.annotations.component.Configuration;
 import org.bmSpring.annotations.component.Controller;
+import org.bmSpring.exception.BeanClassLoadException;
+import org.bmSpring.exception.BeanCreateException;
 import org.bmSpring.scan.ResourceLoader;
 
 import java.lang.reflect.Constructor;
@@ -20,28 +22,33 @@ public class BeanContext {
     private final HashMap<String, Object> beans = new HashMap<>();
 
     public BeanContext() {
-        Set<Class<?>> componentClasses = ResourceLoader.classesContainsAnnotation(Component.class);
-
         Set<Class<?>> classBeans = new HashSet<>();
         List<BeanMethod> beanMethods = new ArrayList<>();
 
-        for (Class<?> componentClass : componentClasses) {
-            if (componentClass.isAnnotationPresent(Configuration.class)) {
-                Method[] methods = componentClass.getMethods();
-                String configName = componentClass.getAnnotation(Configuration.class).name();
+        try {
+            Set<Class<?>> componentClasses = ResourceLoader.classesContainsAnnotation(Component.class);
 
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(Bean.class)) {
-                        String name = method.getAnnotation(Bean.class).name();
 
-                        if (name.isEmpty()) name = method.getName();
+            for (Class<?> componentClass : componentClasses) {
+                if (componentClass.isAnnotationPresent(Configuration.class)) {
+                    Method[] methods = componentClass.getMethods();
+                    String configName = componentClass.getAnnotation(Configuration.class).name();
 
-                        beanMethods.add(new BeanMethod(configName.isEmpty() ? componentClass.getSimpleName() : configName, name, method, method.getReturnType()));
+                    for (Method method : methods) {
+                        if (method.isAnnotationPresent(Bean.class)) {
+                            String name = method.getAnnotation(Bean.class).name();
+
+                            if (name.isEmpty()) name = method.getName();
+
+                            beanMethods.add(new BeanMethod(configName.isEmpty() ? componentClass.getSimpleName() : configName, name, method, method.getReturnType()));
+                        }
                     }
                 }
-            }
 
-            classBeans.add(componentClass);
+                classBeans.add(componentClass);
+            }
+        } catch (Exception e) {
+            throw new BeanClassLoadException();
         }
 
         //bean 의존성 자동 주입
@@ -85,7 +92,7 @@ public class BeanContext {
 
                 beans.put(name, bean);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new BeanCreateException();
             }
         }
     }
@@ -133,7 +140,7 @@ public class BeanContext {
 
             beans.put(beanMethod.getBeanName(), bean);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new BeanCreateException();
         }
     }
 

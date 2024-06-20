@@ -3,7 +3,7 @@ package org.bmSpring.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bmSpring.bean.BeanContext;
 import org.bmSpring.exception.ServletException;
-import org.bmSpring.exception.enums.ExceptionCode;
+import org.bmSpring.exception.enums.ServletExceptionCode;
 import org.bmSpring.servlet.enums.MediaType;
 import org.bmSpring.servlet.factory.HttpServletFactory;
 import org.bmSpring.servlet.factory.HttpServletFactoryImpl;
@@ -58,15 +58,15 @@ public class HttpServletContext {
                         isIOException = true;
                     }
 
-                    if (isIOException) throw new ServletException(ExceptionCode.NOT_FOUND);
-                    
+                    if (isIOException) throw new ServletException(ServletExceptionCode.NOT_FOUND);
+
                     try {
                         CreateServletModel httpModel = new CreateServletModel(in, out, httpServletFactory);
 
                         runner.runServlet(httpModel.getHttpServletRequestInfo(), httpModel.getHttpServletResponseInfo(),
                                 beanContext.getBean(httpModel.getHttpServletRequestInfo().getControllerName()));
                     } catch (ServletException e) {
-                        ExceptionCode code = e.getExceptionCode();
+                        ServletExceptionCode code = e.getExceptionCode();
                         out.println(String.format("HTTP/1.1 %d %s", code.getCode(), code.getMsg()));
                         out.println("Content-Type: " + MediaType.APPLICATION_JSON_VALUE.getContentName());
                         out.println();
