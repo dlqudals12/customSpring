@@ -1,4 +1,4 @@
-package org.bmSpring.annotations;
+package org.bmSpring.annotations.bean;
 
 import java.lang.annotation.*;
 

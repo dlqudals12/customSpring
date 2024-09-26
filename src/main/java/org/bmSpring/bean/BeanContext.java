@@ -1,8 +1,9 @@
 package org.bmSpring.bean;
 
 import lombok.Getter;
-import org.bmSpring.annotations.Bean;
 import org.bmSpring.annotations.Qualifier;
+import org.bmSpring.annotations.bean.Autowired;
+import org.bmSpring.annotations.bean.Bean;
 import org.bmSpring.annotations.component.Component;
 import org.bmSpring.annotations.component.Configuration;
 import org.bmSpring.annotations.component.Controller;
@@ -12,8 +13,10 @@ import org.bmSpring.scan.ResourceLoader;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 @Getter
@@ -137,6 +140,18 @@ public class BeanContext {
                 bean = method.invoke(beans.get(beanMethod.getClassName()));
             else
                 bean = method.invoke(beans.get(beanMethod.getClassName()), parameterBeanNames.stream().map(beans::get).toList());
+
+            Stream.of(bean.getClass().getFields())
+                    .filter(field -> field.isAnnotationPresent(Autowired.class) && !Modifier.isFinal(field.getModifiers()))
+                    .forEach(field -> {
+                        field.setAccessible(true);
+
+                        try {
+                            field.set(bean, beans.get(field.getName()));
+                        } catch (IllegalAccessException e) {
+                            throw new BeanCreateException();
+                        }
+                    });
 
             beans.put(beanMethod.getBeanName(), bean);
         } catch (Exception e) {

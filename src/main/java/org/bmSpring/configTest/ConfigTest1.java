@@ -1,6 +1,6 @@
 package org.bmSpring.configTest;
 
-import org.bmSpring.annotations.Bean;
+import org.bmSpring.annotations.bean.Bean;
 import org.bmSpring.annotations.component.Configuration;
 
 @Configuration
