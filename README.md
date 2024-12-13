@@ -6,7 +6,6 @@
     - java 17 (Lombok이 21 version 지원 안함 2024-04-12)
 
 * 사용한 라이브러리
-    * gradle
     * lombok
     * object mapper
     * reflection
