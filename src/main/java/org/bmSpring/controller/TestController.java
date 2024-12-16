@@ -12,8 +12,8 @@ import org.bmSpring.servlet.model.HttpServletResponse;
 public class TestController {
 
     @GetMapping("/")
-    public void test1() {
-
+    public String test1() {
+        return "SUCCESS";
     }
 
     @PostMapping("/1")

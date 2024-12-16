@@ -36,7 +36,7 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             Map<String, Object> paramterMap = new HashMap<>();
             List<Object> parameters = new ArrayList<>();
 
-            if (!reader.getRequestParams().isEmpty()) {
+            if (reader.getRequestParams() != null && !reader.getRequestParams().isEmpty()) {
                 paramterMap = reader.getRequestParams();
             }
 
@@ -83,8 +83,10 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             cookieBuilder.append("Cookie: ");
 
             //cookie
-            for (Cookie cookie : writer.getCookies()) {
-                cookie.cookieString(cookieBuilder);
+            if (writer.getCookies() != null) {
+                for (Cookie cookie : writer.getCookies()) {
+                    cookie.cookieString(cookieBuilder);
+                }
             }
 
             out.println(cookieBuilder);
@@ -92,6 +94,7 @@ public class HttpServletRunnerImpl implements HttpServletRunner {
             out.println(dataJson);
             out.close();
         } catch (Throwable e) {
+            System.out.println(e);
             throw new HttpServerException();
         }
     }

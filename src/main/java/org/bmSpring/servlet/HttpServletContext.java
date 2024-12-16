@@ -40,7 +40,7 @@ public class HttpServletContext {
     @SuppressWarnings("all")
     public void waitServer() {
         try {
-            ServerSocket serverSocket = new ServerSocket(19050);
+            ServerSocket serverSocket = new ServerSocket(8080);
 
             while (true) {
                 Socket socket = serverSocket.accept();

@@ -62,8 +62,10 @@ public class CreateServletModel {
             this.httpServletRequestInfo = httpServletRequestInfo;
             this.httpServletResponseInfo = new HttpServletResponseInfo(out, httpMethod, headers, httpServletRequestInfo.getCookies());
         } catch (HttpEmptyPathException e) {
+            System.out.println(e);
             throw new HttpEmptyPathException();
         } catch (Exception e) {
+            System.out.println(e);
             throw new HttpRequestException();
         }
     }
@@ -87,7 +89,9 @@ public class CreateServletModel {
         for (String splitParameter : splitParameters) {
             String[] splitParams = splitParameter.split("=");
 
-            requestParam.put(splitParams[0], splitParams[1]);
+            if (splitParams.length >= 2) {
+                requestParam.put(splitParams[0], splitParams[1]);
+            }
         }
 
         HashMap<String, Object> requestValues = new HashMap<>();

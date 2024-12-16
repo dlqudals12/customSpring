@@ -25,10 +25,9 @@ public class HttpServletRequestInfo implements HttpServletRequest {
     private boolean isHttpServletResponse;
 
     public void newRequest(HashMap<String, Object> headerMap) {
-        if (headerMap.get("cookie") != null) {
+        String cookieString = (String) headerMap.get("cookie");
+        if (cookieString != null && !cookieString.isEmpty()) {
             this.cookies = new ArrayList<>();
-
-            String cookieString = (String) headerMap.get("cookie");
 
             String[] cookieSplit = cookieString.split("; ");
 
@@ -57,9 +56,9 @@ public class HttpServletRequestInfo implements HttpServletRequest {
     }
 
     public void setHeaders(HashMap<String, Object> header) {
-        this.remoteIp = header.get("x-forwarded-for").toString();
-        this.host = header.get("host").toString();
-        this.acceptLanguage = header.get("accept-language").toString();
+        this.remoteIp = header.containsKey("x-forwarded-for") ? header.get("x-forwarded-for").toString() : null;
+        this.host = header.containsKey("host") ? header.get("host").toString() : null;
+        this.acceptLanguage = header.containsKey("accept-language") ? header.get("accept-language").toString() : null;
     }
 
     public void setResponseBody(Object responseBody) {
